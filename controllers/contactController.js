@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler")
 const Contact= require("../models/contactModel");
+
 //@desc Get all contacts
 //@route GET /api/contacts
 //@access public
@@ -64,7 +65,7 @@ const getContact = asyncHandler(async (req,res)=>{
       res.status(404);
       throw new Error("Contact not found"); 
    }  
-   await Contact.remove();
+   await contact.remove();
    res.status(200).json(contact);
  });
 
