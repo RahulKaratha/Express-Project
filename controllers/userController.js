@@ -42,7 +42,7 @@ const registerUser = asyncHandler(async (req,res)=>{
 //@access public
 
 const loginUser = asyncHandler(async (req,res)=>{
-  const {email,password}= request.body;
+  const {email,password}= req.body;
   if (!email||!password){
     res.status(400);
     throw new Error("All fields are mandatory");
@@ -50,13 +50,15 @@ const loginUser = asyncHandler(async (req,res)=>{
   const user = await User.findOne({email});
   //compare password with hash password
   if (user&&(await bcrypt.compare(password,user.password))){    
-     const acessToken = jwt.sign({
+     const acessToken = jwt.sign(
+      {
         user:{
         username: user.username,
         email:user.email,
         id: user.id,
-      },
-  },process.env.ACCESS_TOKEN_SECRET,{expiresIn:"1m"});
+      } },
+      process.env.ACCESS_TOKEN_SECRET,
+      {expiresIn:"15m"});
     res.status(200).json({acessToken});
   }else{
     res.status(401)
@@ -70,7 +72,6 @@ const loginUser = asyncHandler(async (req,res)=>{
 //@access private
 
 const currentUser = asyncHandler(async (req,res)=>{
-  const contacts = await Contact.find();
-  res.status(200).json(contacts);
+  res.status(200).json(req.user);
 });
 module.exports={registerUser,loginUser,currentUser};
